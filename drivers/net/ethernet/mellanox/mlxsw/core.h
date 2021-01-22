@@ -614,4 +614,26 @@ int mlxsw_linecard_status_process(struct mlxsw_core *mlxsw_core,
 int mlxsw_linecard_bct_process(struct mlxsw_core *mlxsw_core,
 			       const char *mbct_pl);
 
+struct mlxsw_linecards_event_ops {
+	int (*got_provisioned)(struct mlxsw_core *mlxsw_core, u8 slot_index,
+			       const struct mlxsw_linecard *linecard,
+			       void *priv);
+	void (*got_unprovisioned)(struct mlxsw_core *mlxsw_core, u8 slot_index,
+				  const struct mlxsw_linecard *linecard,
+				  void *priv);
+	void (*got_active)(struct mlxsw_core *mlxsw_core, u8 slot_index,
+			   const struct mlxsw_linecard *linecard,
+			   void *priv);
+	void (*got_inactive)(struct mlxsw_core *mlxsw_core, u8 slot_index,
+			     const struct mlxsw_linecard *linecard,
+			     void *priv);
+};
+
+int mlxsw_linecards_event_ops_register(struct mlxsw_core *mlxsw_core,
+				       struct mlxsw_linecards_event_ops *ops,
+				       void *priv);
+void mlxsw_linecards_event_ops_unregister(struct mlxsw_core *mlxsw_core,
+					  struct mlxsw_linecards_event_ops *ops,
+					  void *priv);
+
 #endif
