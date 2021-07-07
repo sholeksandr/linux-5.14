@@ -261,9 +261,6 @@ static int mlxreg_led_config(struct mlxreg_led_priv_data *priv)
 		if (err)
 			return err;
 
-		if (led_cdev->brightness)
-			mlxreg_led_brightness_set(led_cdev,
-						  led_cdev->brightness);
 		dev_info(led_cdev->dev, "label: %s, mask: 0x%02x, offset:0x%02x\n",
 			 data->label, data->mask, data->reg);
 	}
