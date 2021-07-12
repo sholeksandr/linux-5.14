@@ -131,6 +131,8 @@
 #define MLXPLAT_CPLD_LPC_REG_TACHO10_OFFSET	0xee
 #define MLXPLAT_CPLD_LPC_REG_TACHO11_OFFSET	0xef
 #define MLXPLAT_CPLD_LPC_REG_TACHO12_OFFSET	0xf0
+#define MLXPLAT_CPLD_LPC_REG_TACHO13_OFFSET	0xf1
+#define MLXPLAT_CPLD_LPC_REG_TACHO14_OFFSET	0xf2
 #define MLXPLAT_CPLD_LPC_REG_PWM3_OFFSET	0xf3
 #define MLXPLAT_CPLD_LPC_REG_PWM4_OFFSET	0xf4
 #define MLXPLAT_CPLD_LPC_REG_FAN_CAP1_OFFSET	0xf5
@@ -198,7 +200,7 @@
 #define MLXPLAT_CPLD_PWR_EXT_MASK	GENMASK(3, 0)
 #define MLXPLAT_CPLD_FAN_MASK		GENMASK(3, 0)
 #define MLXPLAT_CPLD_ASIC_MASK		GENMASK(1, 0)
-#define MLXPLAT_CPLD_FAN_NG_MASK	GENMASK(5, 0)
+#define MLXPLAT_CPLD_FAN_NG_MASK	GENMASK(6, 0)
 #define MLXPLAT_CPLD_LED_LO_NIBBLE_MASK	GENMASK(7, 4)
 #define MLXPLAT_CPLD_LED_HI_NIBBLE_MASK	GENMASK(3, 0)
 #define MLXPLAT_CPLD_VOLTREG_UPD_MASK	GENMASK(5, 4)
@@ -935,6 +937,14 @@ static struct mlxreg_core_data mlxplat_mlxcpld_default_ng_fan_items_data[] = {
 		.mask = BIT(5),
 		.capability = MLXPLAT_CPLD_LPC_REG_FAN_DRW_CAP_OFFSET,
 		.bit = BIT(5),
+		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
+	},
+	{
+		.label = "fan7",
+		.reg = MLXPLAT_CPLD_LPC_REG_FAN_OFFSET,
+		.mask = BIT(6),
+		.capability = MLXPLAT_CPLD_LPC_REG_FAN_DRW_CAP_OFFSET,
+		.bit = BIT(6),
 		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
 	},
 };
@@ -2167,6 +2177,20 @@ static struct mlxreg_core_data mlxplat_mlxcpld_default_ng_led_data[] = {
 		.mask = MLXPLAT_CPLD_LED_HI_NIBBLE_MASK,
 		.capability = MLXPLAT_CPLD_LPC_REG_FAN_DRW_CAP_OFFSET,
 		.bit = BIT(5),
+	},
+	{
+		.label = "fan7:green",
+		.reg = MLXPLAT_CPLD_LPC_REG_LED6_OFFSET,
+		.mask = MLXPLAT_CPLD_LED_HI_NIBBLE_MASK,
+		.capability = MLXPLAT_CPLD_LPC_REG_FAN_DRW_CAP_OFFSET,
+		.bit = BIT(6),
+	},
+	{
+		.label = "fan7:orange",
+		.reg = MLXPLAT_CPLD_LPC_REG_LED6_OFFSET,
+		.mask = MLXPLAT_CPLD_LED_HI_NIBBLE_MASK,
+		.capability = MLXPLAT_CPLD_LPC_REG_FAN_DRW_CAP_OFFSET,
+		.bit = BIT(6),
 	},
 	{
 		.label = "uid:blue",
@@ -3519,6 +3543,20 @@ static struct mlxreg_core_data mlxplat_mlxcpld_default_fan_data[] = {
 		.reg_prsnt = MLXPLAT_CPLD_LPC_REG_FAN_OFFSET,
 	},
 	{
+		.label = "tacho13",
+		.reg = MLXPLAT_CPLD_LPC_REG_TACHO13_OFFSET,
+		.mask = GENMASK(7, 0),
+		.capability = MLXPLAT_CPLD_LPC_REG_FAN_CAP2_OFFSET,
+		.bit = BIT(4),
+	},
+	{
+		.label = "tacho14",
+		.reg = MLXPLAT_CPLD_LPC_REG_TACHO14_OFFSET,
+		.mask = GENMASK(7, 0),
+		.capability = MLXPLAT_CPLD_LPC_REG_FAN_CAP2_OFFSET,
+		.bit = BIT(5),
+	},
+	{
 		.label = "conf",
 		.capability = MLXPLAT_CPLD_LPC_REG_TACHO_SPEED_OFFSET,
 	},
@@ -3931,6 +3969,8 @@ static bool mlxplat_mlxcpld_readable_reg(struct device *dev, unsigned int reg)
 	case MLXPLAT_CPLD_LPC_REG_TACHO10_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_TACHO11_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_TACHO12_OFFSET:
+	case MLXPLAT_CPLD_LPC_REG_TACHO13_OFFSET:
+	case MLXPLAT_CPLD_LPC_REG_TACHO14_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_PWM_CONTROL_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_FAN_CAP1_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_FAN_CAP2_OFFSET:
@@ -4050,6 +4090,8 @@ static bool mlxplat_mlxcpld_volatile_reg(struct device *dev, unsigned int reg)
 	case MLXPLAT_CPLD_LPC_REG_TACHO10_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_TACHO11_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_TACHO12_OFFSET:
+	case MLXPLAT_CPLD_LPC_REG_TACHO13_OFFSET:
+	case MLXPLAT_CPLD_LPC_REG_TACHO14_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_PWM_CONTROL_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_FAN_CAP1_OFFSET:
 	case MLXPLAT_CPLD_LPC_REG_FAN_CAP2_OFFSET:
