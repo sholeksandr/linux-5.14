@@ -3689,6 +3689,18 @@ static struct mlxreg_core_data mlxplat_mlxcpld_default_fan_data[] = {
 		.reg = MLXPLAT_CPLD_LPC_REG_PWM1_OFFSET,
 	},
 	{
+		.label = "pwm2",
+		.reg = MLXPLAT_CPLD_LPC_REG_PWM2_OFFSET,
+	},
+	{
+		.label = "pwm3",
+		.reg = MLXPLAT_CPLD_LPC_REG_PWM3_OFFSET,
+	},
+	{
+		.label = "pwm4",
+		.reg = MLXPLAT_CPLD_LPC_REG_PWM4_OFFSET,
+	},
+	{
 		.label = "tacho1",
 		.reg = MLXPLAT_CPLD_LPC_REG_TACHO1_OFFSET,
 		.mask = GENMASK(7, 0),
