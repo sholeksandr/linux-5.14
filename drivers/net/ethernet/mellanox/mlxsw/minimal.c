@@ -54,8 +54,20 @@ static int mlxsw_m_base_mac_get(struct mlxsw_m *mlxsw_m)
 	return 0;
 }
 
-static int mlxsw_m_port_dummy_open_stop(struct net_device *dev)
+static int mlxsw_m_port_open(struct net_device *dev)
 {
+	struct mlxsw_m_port *mlxsw_m_port = netdev_priv(dev);
+	struct mlxsw_m *mlxsw_m = mlxsw_m_port->mlxsw_m;
+
+	return mlxsw_env_module_port_up(mlxsw_m->core, mlxsw_m_port->module);
+}
+
+static int mlxsw_m_port_stop(struct net_device *dev)
+{
+	struct mlxsw_m_port *mlxsw_m_port = netdev_priv(dev);
+	struct mlxsw_m *mlxsw_m = mlxsw_m_port->mlxsw_m;
+
+	mlxsw_env_module_port_down(mlxsw_m->core, mlxsw_m_port->module);
 	return 0;
 }
 
@@ -70,8 +82,8 @@ mlxsw_m_port_get_devlink_port(struct net_device *dev)
 }
 
 static const struct net_device_ops mlxsw_m_port_netdev_ops = {
-	.ndo_open		= mlxsw_m_port_dummy_open_stop,
-	.ndo_stop		= mlxsw_m_port_dummy_open_stop,
+	.ndo_open		= mlxsw_m_port_open,
+	.ndo_stop		= mlxsw_m_port_stop,
 	.ndo_get_devlink_port	= mlxsw_m_port_get_devlink_port,
 };
 
