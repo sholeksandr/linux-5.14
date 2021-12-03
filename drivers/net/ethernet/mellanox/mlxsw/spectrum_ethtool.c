@@ -566,7 +566,7 @@ mlxsw_sp_port_get_transceiver_overheat_stats(struct mlxsw_sp_port *mlxsw_sp_port
 	u64 stats;
 	int err;
 
-	err = mlxsw_env_module_overheat_counter_get(mlxsw_core,
+	err = mlxsw_env_module_overheat_counter_get(mlxsw_core, 0,
 						    port_mapping.module,
 						    &stats);
 	if (err)
@@ -1029,7 +1029,7 @@ static int mlxsw_sp_get_module_info(struct net_device *netdev,
 	struct mlxsw_sp *mlxsw_sp = mlxsw_sp_port->mlxsw_sp;
 	int err;
 
-	err = mlxsw_env_get_module_info(mlxsw_sp->core,
+	err = mlxsw_env_get_module_info(mlxsw_sp->core, 0,
 					mlxsw_sp_port->mapping.module,
 					modinfo);
 
@@ -1043,7 +1043,7 @@ static int mlxsw_sp_get_module_eeprom(struct net_device *netdev,
 	struct mlxsw_sp *mlxsw_sp = mlxsw_sp_port->mlxsw_sp;
 	int err;
 
-	err = mlxsw_env_get_module_eeprom(netdev, mlxsw_sp->core,
+	err = mlxsw_env_get_module_eeprom(netdev, mlxsw_sp->core, 0,
 					  mlxsw_sp_port->mapping.module, ee,
 					  data);
 
@@ -1059,8 +1059,8 @@ mlxsw_sp_get_module_eeprom_by_page(struct net_device *dev,
 	struct mlxsw_sp *mlxsw_sp = mlxsw_sp_port->mlxsw_sp;
 	u8 module = mlxsw_sp_port->mapping.module;
 
-	return mlxsw_env_get_module_eeprom_by_page(mlxsw_sp->core, module, page,
-						   extack);
+	return mlxsw_env_get_module_eeprom_by_page(mlxsw_sp->core, 0, module,
+						   page, extack);
 }
 
 static int
