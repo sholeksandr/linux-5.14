@@ -1420,7 +1420,7 @@ static int mlxsw_sp_port_overheat_init_val_set(struct mlxsw_sp_port *mlxsw_sp_po
 	u64 overheat_counter;
 	int err;
 
-	err = mlxsw_env_module_overheat_counter_get(mlxsw_sp->core, module,
+	err = mlxsw_env_module_overheat_counter_get(mlxsw_sp->core, 0, module,
 						    &overheat_counter);
 	if (err)
 		return err;
