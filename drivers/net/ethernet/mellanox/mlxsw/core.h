@@ -417,6 +417,7 @@ struct mlxsw_driver {
 	 */
 	void (*ptp_transmitted)(struct mlxsw_core *mlxsw_core,
 				struct sk_buff *skb, u8 local_port);
+	void (*sys_event_handler)(struct mlxsw_core *mlxsw_core);
 
 	u8 txhdr_len;
 	const struct mlxsw_config_profile *profile;
@@ -459,7 +460,8 @@ struct mlxsw_bus {
 	const char *kind;
 	int (*init)(void *bus_priv, struct mlxsw_core *mlxsw_core,
 		    const struct mlxsw_config_profile *profile,
-		    struct mlxsw_res *res);
+		    struct mlxsw_res *res,
+		    void (*sys_event_handler)(struct mlxsw_core *mlxsw_core));
 	void (*fini)(void *bus_priv);
 	bool (*skb_transmit_busy)(void *bus_priv,
 				  const struct mlxsw_tx_info *tx_info);

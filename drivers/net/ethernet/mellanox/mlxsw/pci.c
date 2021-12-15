@@ -1486,9 +1486,12 @@ static void mlxsw_pci_free_irq_vectors(struct mlxsw_pci *mlxsw_pci)
 	pci_free_irq_vectors(mlxsw_pci->pdev);
 }
 
-static int mlxsw_pci_init(void *bus_priv, struct mlxsw_core *mlxsw_core,
-			  const struct mlxsw_config_profile *profile,
-			  struct mlxsw_res *res)
+static int
+mlxsw_pci_init(void *bus_priv, struct mlxsw_core *mlxsw_core,
+	       const struct mlxsw_config_profile *profile,
+	       struct mlxsw_res *res,
+	       void (*sys_event_handler)(struct mlxsw_core *mlxsw_core))
+
 {
 	struct mlxsw_pci *mlxsw_pci = bus_priv;
 	struct pci_dev *pdev = mlxsw_pci->pdev;
