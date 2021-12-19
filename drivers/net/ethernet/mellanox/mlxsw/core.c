@@ -104,6 +104,7 @@ struct mlxsw_linecards *mlxsw_core_linecards(struct mlxsw_core *mlxsw_core)
 {
 	return mlxsw_core->linecards;
 }
+EXPORT_SYMBOL(mlxsw_core_linecards);
 
 #define MLXSW_PORT_MAX_PORTS_DEFAULT	0x40
 
