@@ -280,13 +280,13 @@ static int mlxsw_m_ports_create(struct mlxsw_m *mlxsw_m)
 	char mgpir_pl[MLXSW_REG_MGPIR_LEN];
 	int i, err;
 
-	mlxsw_reg_mgpir_pack(mgpir_pl);
+	mlxsw_reg_mgpir_pack(mgpir_pl, 0);
 	err = mlxsw_reg_query(mlxsw_m->core, MLXSW_REG(mgpir), mgpir_pl);
 	if (err)
 		return err;
 
 	mlxsw_reg_mgpir_unpack(mgpir_pl, NULL, NULL, NULL,
-			       &mlxsw_m->max_ports);
+			       &mlxsw_m->max_ports, NULL);
 	if (!mlxsw_m->max_ports)
 		return 0;
 
