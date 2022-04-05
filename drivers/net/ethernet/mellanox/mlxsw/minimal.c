@@ -64,11 +64,12 @@ static int mlxsw_m_base_mac_get(struct mlxsw_m *mlxsw_m)
 {
 	char spad_pl[MLXSW_REG_SPAD_LEN] = {0};
 	int err;
-
+#if 0
 	err = mlxsw_reg_query(mlxsw_m->core, MLXSW_REG(spad), spad_pl);
 	if (err)
 		return err;
 	mlxsw_reg_spad_base_mac_memcpy_from(spad_pl, mlxsw_m->base_mac);
+#endif
 	return 0;
 }
 
