@@ -149,6 +149,8 @@ enum mlxsw_cmd_status {
 	MLXSW_CMD_STATUS_BAD_NVMEM	= 0x0B,
 	/* Device is currently running reset */
 	MLXSW_CMD_STATUS_RUNNING_RESET	= 0x26,
+	/* FW ISSU ongoing. */
+	MLXSW_CMD_STATUS_FW_ISSU	= 0x27,
 	/* Bad management packet (silently discarded). */
 	MLXSW_CMD_STATUS_BAD_PKT	= 0x30,
 };
@@ -180,6 +182,8 @@ static inline const char *mlxsw_cmd_status_str(u8 status)
 		return "BAD_NVMEM";
 	case MLXSW_CMD_STATUS_RUNNING_RESET:
 		return "RUNNING_RESET";
+	case MLXSW_CMD_STATUS_FW_ISSU:
+		return "FW_ISSU_ONGOING";
 	case MLXSW_CMD_STATUS_BAD_PKT:
 		return "BAD_PKT";
 	default:
