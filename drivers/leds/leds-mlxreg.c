@@ -11,6 +11,7 @@
 #include <linux/of_device.h>
 #include <linux/platform_data/mlxreg.h>
 #include <linux/platform_device.h>
+#include <linux/string_helpers.h>
 #include <linux/regmap.h>
 
 /* Codes for LEDs. */
@@ -132,15 +133,39 @@ mlxreg_led_get_hw(struct mlxreg_led_data *led_data)
 	return LED_OFF;
 }
 
+static char *mlxreg_led_udev_envp[] = { NULL, NULL };
+
+static int
+mlxreg_led_udev_event_send(struct mlxreg_led_data *led_data, enum led_brightness value)
+{
+	struct mlxreg_core_data *data = led_data->data;
+	struct kobject *kobj = &led_data->led_cdev.dev->kobj;
+
+	char event_str[MLXREG_CORE_LABEL_MAX_SIZE + 2];
+	char label[MLXREG_CORE_LABEL_MAX_SIZE] = { 0 };
+
+	mlxreg_led_udev_envp[0] = event_str;
+	string_upper(label, data->label);
+	snprintf(event_str, MLXREG_CORE_LABEL_MAX_SIZE, "%s=%d", label, value);
+
+	return kobject_uevent_env(kobj, KOBJ_CHANGE, mlxreg_led_udev_envp);
+}
+
 static int
 mlxreg_led_brightness_set(struct led_classdev *cled, enum led_brightness value)
 {
 	struct mlxreg_led_data *led_data = cdev_to_priv(cled);
+	int err;
 
 	if (value)
-		return mlxreg_led_store_hw(led_data, led_data->base_color);
+		err = mlxreg_led_store_hw(led_data, led_data->base_color);
 	else
-		return mlxreg_led_store_hw(led_data, MLXREG_LED_IS_OFF);
+		err = mlxreg_led_store_hw(led_data, MLXREG_LED_IS_OFF);
+
+	if (!err)
+		return mlxreg_led_udev_event_send(led_data, value);
+	else
+		return err;
 }
 
 static enum led_brightness
