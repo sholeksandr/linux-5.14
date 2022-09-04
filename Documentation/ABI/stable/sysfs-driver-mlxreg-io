@@ -103,13 +103,13 @@ Description:	These files show the system reset cause, as following: power
 What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_comex_pwr_fail
 What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_from_comex
 What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_system
-What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_voltmon_upgrade_fail
+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_pwr_converter_fail
 Date:		November 2018
 KernelVersion:	5.0
 Contact:	Vadim Pasternak <vadimpmellanox.com>
 Description:	These files show the system reset cause, as following: ComEx
 		power fail, reset from ComEx, system platform reset, reset
-		due to voltage monitor devices upgrade failure,
+		due to power converter devices failure,
 		Value 1 in file means this is reset cause, 0 - otherwise.
 		Only one bit could be 1 at the same time, representing only
 		the last reset cause.
