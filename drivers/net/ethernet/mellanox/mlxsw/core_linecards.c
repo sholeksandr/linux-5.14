@@ -1501,5 +1501,7 @@ void mlxsw_linecards_event_ops_unregister(struct mlxsw_core *mlxsw_core,
 	}
 }
 EXPORT_SYMBOL(mlxsw_linecards_event_ops_unregister);
-
+/* Skip for non-upstream flow. */
+#if 0
 MODULE_FIRMWARE(MLXSW_LINECARDS_INI_BUNDLE_FILE);
+#endif
