@@ -31,7 +31,7 @@ struct mlxsw_m {
 	struct mlxsw_core *core;
 	const struct mlxsw_bus_info *bus_info;
 	u8 base_mac[ETH_ALEN];
-	u8 max_ports;
+	u16 max_ports;
 	u8 max_module_count; /* Maximum number of modules per-slot. */
 	u8 num_of_slots; /* Including the main board. */
 	struct mlxsw_m_line_card **line_cards;
@@ -230,7 +230,7 @@ mlxsw_m_port_dev_addr_get(struct mlxsw_m_port *mlxsw_m_port)
 
 static struct
 mlxsw_m_port_mapping *mlxsw_m_port_mapping_get(struct mlxsw_m *mlxsw_m,
-					       u8 slot_index, u8 local_port)
+					       u8 slot_index, u16 local_port)
 {
 	return &mlxsw_m->line_cards[slot_index]->port_mapping[local_port];
 }
