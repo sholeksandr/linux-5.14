@@ -2905,7 +2905,7 @@ u64 mlxsw_core_res_get(struct mlxsw_core *mlxsw_core,
 }
 EXPORT_SYMBOL(mlxsw_core_res_get);
 
-static int __mlxsw_core_port_init(struct mlxsw_core *mlxsw_core, u8 local_port,
+static int __mlxsw_core_port_init(struct mlxsw_core *mlxsw_core, u16 local_port,
 				  enum devlink_port_flavour flavour,
 				  u8 slot_index, u32 port_number, bool split,
 				  u32 split_port_subnumber,
@@ -2955,7 +2955,7 @@ static void __mlxsw_core_port_fini(struct mlxsw_core *mlxsw_core, u8 local_port)
 	memset(mlxsw_core_port, 0, sizeof(*mlxsw_core_port));
 }
 
-int mlxsw_core_port_init(struct mlxsw_core *mlxsw_core, u8 local_port,
+int mlxsw_core_port_init(struct mlxsw_core *mlxsw_core, u16 local_port,
 			 u8 slot_index, u32 port_number, bool split,
 			 u32 split_port_subnumber,
 			 bool splittable, u32 lanes,
