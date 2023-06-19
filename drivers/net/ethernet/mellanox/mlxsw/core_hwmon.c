@@ -412,6 +412,13 @@ mlxsw_hwmon_module_temp_label_show(struct device *dev,
 	int index = mlxsw_hwmon_attr->type_index;
 
 	mlxsw_hwmon_dev = mlxsw_hwmon_attr->mlxsw_hwmon_dev;
+	/* For some devices 'sensor count' provides the number of ASIC sensor
+	 * plus additional platform sensors. Set 'index' used in label name
+	 * according to the 'sensor_count' value to align label name with the
+	 * module index.
+	 */
+	if (mlxsw_hwmon_dev->sensor_count > 1)
+		index += 1 - mlxsw_hwmon_dev->sensor_count;
 	if (strlen(mlxsw_hwmon_dev->name))
 		index += 1;
 
