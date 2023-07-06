@@ -702,8 +702,9 @@ static int mlxsw_i2c_probe(struct i2c_client *client,
 		}
 
 		mlxsw_i2c->block_size = min_t(u16, MLXSW_I2C_BLK_MAX,
-					      min_t(u16, quirks->max_read_len,
-						    quirks->max_write_len));
+                                             max_t(u16, MLXSW_I2C_BLK_DEF,
+                                             min_t(u16, quirks->max_read_len,
+                                                   quirks->max_write_len)));
 	} else {
 		mlxsw_i2c->block_size = MLXSW_I2C_BLK_DEF;
 	}
