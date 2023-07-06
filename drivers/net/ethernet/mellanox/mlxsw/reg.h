@@ -9749,7 +9749,7 @@ MLXSW_ITEM_BIT_ARRAY(reg, mtwe, sensor_warning, 0x0, 0x10, 1);
 #define MLXSW_REG_MTBR_ID 0x900F
 #define MLXSW_REG_MTBR_BASE_LEN 0x10 /* base length, without records */
 #define MLXSW_REG_MTBR_REC_LEN 0x04 /* record length */
-#define MLXSW_REG_MTBR_REC_MAX_COUNT 47 /* firmware limitation */
+#define MLXSW_REG_MTBR_REC_MAX_COUNT 1
 #define MLXSW_REG_MTBR_LEN (MLXSW_REG_MTBR_BASE_LEN +	\
 			    MLXSW_REG_MTBR_REC_LEN *	\
 			    MLXSW_REG_MTBR_REC_MAX_COUNT)
