@@ -44,6 +44,7 @@ static int xdpe152_probe(struct i2c_client *client)
 }
 
 static const struct i2c_device_id xdpe152_id[] = {
+	{"xdpe1a2g7", 0},
 	{"xdpe152c4", 0},
 	{"xdpe15284", 0},
 	{}
@@ -52,6 +53,7 @@ static const struct i2c_device_id xdpe152_id[] = {
 MODULE_DEVICE_TABLE(i2c, xdpe152_id);
 
 static const struct of_device_id __maybe_unused xdpe152_of_match[] = {
+	{.compatible = "infineon,xdpe1a2g7"},
 	{.compatible = "infineon,xdpe152c4"},
 	{.compatible = "infineon,xdpe15284"},
 	{}
