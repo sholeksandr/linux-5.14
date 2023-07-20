@@ -244,7 +244,14 @@ static int mlxreg_led_config(struct mlxreg_led_priv_data *priv)
 				dev_err(&priv->pdev->dev, "Failed to query capability register\n");
 				return err;
 			}
-			if (!(regval & data->bit))
+			/*
+			 * If slot is specified - validate if slot is equipped on system.
+			 * In case slot is specified in platform data, capability register
+			 * contains the counter of untits.
+			 */
+			if (data->slot && data->slot > regval)
+				continue;
+			else if (!(regval & data->bit) && !data->slot)
 				continue;
 			/*
 			 * Field "bit" can contain one capability bit in 0 byte
