@@ -6600,7 +6600,7 @@ mlxplat_i2c_mux_complition_notify(void *handle, struct i2c_adapter *parent,
 	return 0;
 }
 
-static int mlxplat_i2c_mux_topolgy_init(struct mlxplat_priv *priv)
+static int mlxplat_i2c_mux_topology_init(struct mlxplat_priv *priv)
 {
 	int i, err;
 
@@ -6645,7 +6645,7 @@ fail_platform_mux_register:
 	return err;
 }
 
-static void mlxplat_i2c_mux_topolgy_exit(struct mlxplat_priv *priv)
+static void mlxplat_i2c_mux_topology_exit(struct mlxplat_priv *priv)
 {
 	int i;
 
@@ -6661,7 +6661,7 @@ static int mlxplat_i2c_main_complition_notify(void *handle, int id)
 {
 	struct mlxplat_priv *priv = handle;
 
-	return mlxplat_i2c_mux_topolgy_init(priv);
+	return mlxplat_i2c_mux_topology_init(priv);
 }
 
 static int mlxplat_i2c_main_init(struct mlxplat_priv *priv)
@@ -6689,14 +6689,14 @@ static int mlxplat_i2c_main_init(struct mlxplat_priv *priv)
 	}
 
 	if (priv->i2c_main_init_status == MLXPLAT_I2C_MAIN_BUS_NOTIFIED) {
-		err = mlxplat_i2c_mux_topolgy_init(priv);
+		err = mlxplat_i2c_mux_topology_init(priv);
 		if (err)
-			goto fail_mlxplat_i2c_mux_topolgy_init;
+			goto fail_mlxplat_i2c_mux_topology_init;
 	}
 
 	return 0;
 
-fail_mlxplat_i2c_mux_topolgy_init:
+fail_mlxplat_i2c_mux_topology_init:
 fail_platform_i2c_register:
 fail_mlxplat_mlxcpld_verify_bus_topology:
 	return err;
@@ -6704,7 +6704,7 @@ fail_mlxplat_mlxcpld_verify_bus_topology:
 
 static void mlxplat_i2c_main_exit(struct mlxplat_priv *priv)
 {
-	mlxplat_i2c_mux_topolgy_exit(priv);
+	mlxplat_i2c_mux_topology_exit(priv);
 	if (priv->pdev_i2c)
 		platform_device_unregister(priv->pdev_i2c);
 }
