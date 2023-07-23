@@ -6653,8 +6653,6 @@ static void mlxplat_i2c_mux_topology_exit(struct mlxplat_priv *priv)
 		if (priv->pdev_mux[i])
 			platform_device_unregister(priv->pdev_mux[i]);
 	}
-
-	mlxplat_post_exit();
 }
 
 static int mlxplat_i2c_main_complition_notify(void *handle, int id)
@@ -6784,6 +6782,7 @@ static void __exit mlxplat_exit(void)
 		pm_power_off = NULL;
 	mlxplat_pre_exit(priv);
 	mlxplat_i2c_main_exit(priv);
+	mlxplat_post_exit();
 }
 module_exit(mlxplat_exit);
 
