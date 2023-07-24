@@ -6813,6 +6813,9 @@ static int mlxplat_probe(struct platform_device *pdev)
 	struct mlxplat_priv *priv;
 	int i, err;
 
+	if (ACPI_COMPANION(&pdev->dev))
+		mlxplat_dev = pdev;
+
 	err = mlxplat_pre_init(&hotplug_resources, &hotplug_resources_size);
 	if (err)
 		return err;
@@ -6890,9 +6893,16 @@ static int mlxplat_remove(struct platform_device *pdev)
 	return 0;
 }
 
+static const struct acpi_device_id mlxplat_acpi_table[] = {
+	{ "MLNXBF49", 0 },
+	{}
+};
+MODULE_DEVICE_TABLE(acpi, mlxplat_acpi_table);
+
 static struct platform_driver mlxplat_driver = {
 	.driver		= {
 		.name	= "mlxplat",
+		.acpi_match_table = ACPI_PTR(mlxplat_acpi_table),
 		.probe_type = PROBE_FORCE_SYNCHRONOUS,
 	},
 	.probe		= mlxplat_probe,
