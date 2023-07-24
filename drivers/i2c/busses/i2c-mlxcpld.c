@@ -69,6 +69,7 @@ struct  mlxcpld_i2c_curr_xfer {
 struct mlxcpld_i2c_priv {
 	struct i2c_adapter adap;
 	u32 base_addr;
+	void __iomem *addr;
 	struct mutex lock;
 	struct  mlxcpld_i2c_curr_xfer xfer;
 	struct device *dev;
@@ -76,7 +77,7 @@ struct mlxcpld_i2c_priv {
 	int polling_time;
 };
 
-static void mlxcpld_i2c_lpc_write_buf(u8 *data, u8 len, u32 addr)
+static void mlxcpld_i2c_lpc_write_buf_ioport(u8 *data, u8 len, u32 addr)
 {
 	int i;
 
@@ -86,7 +87,7 @@ static void mlxcpld_i2c_lpc_write_buf(u8 *data, u8 len, u32 addr)
 		outb(*(data + i), addr + i);
 }
 
-static void mlxcpld_i2c_lpc_read_buf(u8 *data, u8 len, u32 addr)
+static void mlxcpld_i2c_lpc_read_buf_ioport(u8 *data, u8 len, u32 addr)
 {
 	int i;
 
@@ -96,8 +97,8 @@ static void mlxcpld_i2c_lpc_read_buf(u8 *data, u8 len, u32 addr)
 		*(data + i) = inb(addr + i);
 }
 
-static void mlxcpld_i2c_read_comm(struct mlxcpld_i2c_priv *priv, u8 offs,
-				  u8 *data, u8 datalen)
+static void mlxcpld_i2c_read_comm_ioport(struct mlxcpld_i2c_priv *priv, u8 offs,
+					 u8 *data, u8 datalen)
 {
 	u32 addr = priv->base_addr + offs;
 
@@ -116,13 +117,13 @@ static void mlxcpld_i2c_read_comm(struct mlxcpld_i2c_priv *priv, u8 offs,
 		*((u32 *)data) = inl(addr);
 		break;
 	default:
-		mlxcpld_i2c_lpc_read_buf(data, datalen, addr);
+		mlxcpld_i2c_lpc_read_buf_ioport(data, datalen, addr);
 		break;
 	}
 }
 
-static void mlxcpld_i2c_write_comm(struct mlxcpld_i2c_priv *priv, u8 offs,
-				   u8 *data, u8 datalen)
+static void mlxcpld_i2c_write_comm_ioport(struct mlxcpld_i2c_priv *priv, u8 offs,
+					  u8 *data, u8 datalen)
 {
 	u32 addr = priv->base_addr + offs;
 
@@ -141,9 +142,83 @@ static void mlxcpld_i2c_write_comm(struct mlxcpld_i2c_priv *priv, u8 offs,
 		outl(*((u32 *)data), addr);
 		break;
 	default:
-		mlxcpld_i2c_lpc_write_buf(data, datalen, addr);
+		mlxcpld_i2c_lpc_write_buf_ioport(data, datalen, addr);
 		break;
 	}
+}
+
+static void mlxcpld_i2c_lpc_write_buf_io(u8 *data, u8 len, void __iomem *addr)
+{
+	int i;
+
+	for (i = 0; i < len - len % 2; i += 2)
+		iowrite16(*(u16 *)(data + i), addr + i);
+	for (; i < len; ++i)
+		iowrite8(*(data + i), addr + i);
+}
+
+static void mlxcpld_i2c_lpc_read_buf_io(u8 *data, u8 len, void __iomem *addr)
+{
+	int i;
+
+	for (i = 0; i < len - len % 2; i += 2)
+		*(u16 *)(data + i) = ioread16(addr + i);
+	for (; i < len; ++i)
+		*(data + i) = ioread8(addr + i);
+}
+
+static void mlxcpld_i2c_read_comm_io(struct mlxcpld_i2c_priv *priv, u8 offs,
+				     u8 *data, u8 datalen)
+{
+	void __iomem *addr = priv->addr + offs;
+
+	switch (datalen) {
+	case 1:
+		*(data) = ioread8(addr);
+		break;
+	case 2:
+		*((u16 *)data) = ioread16(addr);
+		break;
+	default:
+		mlxcpld_i2c_lpc_read_buf_io(data, datalen, addr);
+		break;
+	}
+}
+
+static void mlxcpld_i2c_write_comm_io(struct mlxcpld_i2c_priv *priv, u8 offs,
+				      u8 *data, u8 datalen)
+{
+	void __iomem *addr = priv->addr + offs;
+
+	switch (datalen) {
+	case 1:
+		iowrite8(*(data), addr);
+		break;
+	case 2:
+		iowrite16(*((u16 *)data), addr);
+		break;
+	default:
+		mlxcpld_i2c_lpc_write_buf_io(data, datalen, addr);
+		break;
+	}
+}
+
+static void mlxcpld_i2c_write_comm(struct mlxcpld_i2c_priv *priv, u8 offs,
+				   u8 *data, u8 datalen)
+{
+	if (priv->addr)
+		mlxcpld_i2c_write_comm_io(priv, offs, data, datalen);
+	else
+		mlxcpld_i2c_write_comm_ioport(priv, offs, data, datalen);
+}
+
+static void mlxcpld_i2c_read_comm(struct mlxcpld_i2c_priv *priv, u8 offs,
+				  u8 *data, u8 datalen)
+{
+	if (priv->addr)
+		mlxcpld_i2c_read_comm_io(priv, offs, data, datalen);
+	else
+		mlxcpld_i2c_read_comm_ioport(priv, offs, data, datalen);
 }
 
 /*
@@ -535,6 +610,9 @@ static int mlxcpld_i2c_probe(struct platform_device *pdev)
 	/* Set I2C bus frequency if platform data provides this info. */
 	pdata = dev_get_platdata(&pdev->dev);
 	if (pdata) {
+		if (pdata->addr)
+			priv->addr = pdata->addr;
+
 		err = mlxcpld_i2c_set_frequency(priv, pdata);
 		if (err)
 			goto mlxcpld_i2_probe_failed;
