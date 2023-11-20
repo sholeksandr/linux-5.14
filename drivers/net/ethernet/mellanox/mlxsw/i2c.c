@@ -49,7 +49,7 @@
 #define MLXSW_I2C_ADDR_BUF_SIZE		4
 #define MLXSW_I2C_BLK_DEF		32
 #define MLXSW_I2C_BLK_MAX		100
-#define MLXSW_I2C_RETRY			5
+#define MLXSW_I2C_RETRY			25
 #define MLXSW_I2C_TIMEOUT_MSECS		5000
 #define MLXSW_I2C_CMD_RETRY_FW_ERR	3
 #define MLXSW_I2C_MAX_DATA_SIZE		256
@@ -404,6 +404,9 @@ mlxsw_i2c_write(struct device *dev, size_t in_mbox_size, u8 *in_mbox, int num,
 	if (err) {
 		if (mlxsw_i2c->retry_cntr == MLXSW_I2C_CMD_RETRY_FW_ERR)
 			dev_err(&client->dev, "Could not start transaction");
+		else
+			dev_info(&client->dev, "Could not start transaction retry_cntr %d",
+				 mlxsw_i2c->retry_cntr);
 		err = -EIO;
 		goto mlxsw_i2c_write_exit;
 	}
@@ -413,6 +416,9 @@ mlxsw_i2c_write(struct device *dev, size_t in_mbox_size, u8 *in_mbox, int num,
 	if (err) {
 		if (mlxsw_i2c->retry_cntr == MLXSW_I2C_CMD_RETRY_FW_ERR)
 			dev_err(&client->dev, "HW semaphore is not released");
+		else
+			dev_info(&client->dev, "HW semaphore is not released retry_cntr %d",
+				 mlxsw_i2c->retry_cntr);
 		goto mlxsw_i2c_write_exit;
 	}
 
@@ -421,6 +427,9 @@ mlxsw_i2c_write(struct device *dev, size_t in_mbox_size, u8 *in_mbox, int num,
 		if (mlxsw_i2c->retry_cntr == MLXSW_I2C_CMD_RETRY_FW_ERR)
 			dev_err(&client->dev, "Bad transaction completion status %x\n",
 				*p_status);
+		else
+			dev_info(&client->dev, "Bad transaction completion status %x retry_cntr %d",
+				 *p_status, mlxsw_i2c->retry_cntr);
 		err = -EIO;
 	}
 
@@ -460,6 +469,8 @@ retry:
 		if (mutex_lock_interruptible(&mlxsw_i2c->cmd.lock) < 0) {
 			if (mlxsw_i2c->retry_cntr == MLXSW_I2C_CMD_RETRY_FW_ERR)
 				dev_err(&client->dev, "Could not acquire lock");
+			else
+				dev_info(&client->dev, "Could not acquire lock retry_cntr %d", mlxsw_i2c->retry_cntr);
 			err = -EINVAL;
 			goto cmd_retry;
 		}
@@ -482,6 +493,9 @@ retry:
 		if (mutex_lock_interruptible(&mlxsw_i2c->cmd.lock) < 0) {
 			if (mlxsw_i2c->retry_cntr == MLXSW_I2C_CMD_RETRY_FW_ERR)
 				dev_err(&client->dev, "Could not acquire lock");
+			else
+				dev_info(&client->dev, "Could not acquire lock retry_cntr %d",
+					 mlxsw_i2c->retry_cntr);
 			err = -EINVAL;
 			goto cmd_retry;
 		}
