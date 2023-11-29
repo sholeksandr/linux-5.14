@@ -520,6 +520,7 @@ struct mlxreg_core_hotplug_platform_data nvsw_sn2201_hotplug = {
 	.counter = ARRAY_SIZE(nvsw_sn2201_items),
 	.cell = NVSW_SN2201_SYS_INT_STATUS_OFFSET,
 	.mask = NVSW_SN2201_CPLD_AGGR_MASK_DEF,
+	.deferred_nr = NVSW_SN2201_2ND_MUX_CH3_NR,
 };
 
 /* SN2201 static devices. */
