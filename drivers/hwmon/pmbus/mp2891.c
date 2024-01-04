@@ -428,3 +428,4 @@ module_i2c_driver(mp2891_driver);
 
 MODULE_DESCRIPTION("PMBus driver for MPS MP2891 device");
 MODULE_LICENSE("GPL");
+MODULE_IMPORT_NS(PMBUS);
