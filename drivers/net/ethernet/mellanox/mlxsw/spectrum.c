@@ -2149,6 +2149,72 @@ static void mlxsw_sp_pude_event_func(const struct mlxsw_reg_info *reg,
 	}
 }
 
+struct mlxsw_sp_linecard_status_event {
+	struct mlxsw_core *mlxsw_core;
+	char mddq_pl[MLXSW_REG_MDDQ_LEN];
+	struct work_struct work;
+};
+
+static void mlxsw_sp_linecard_status_event_work(struct work_struct *work)
+{
+	struct mlxsw_sp_linecard_status_event *event;
+	struct mlxsw_core *mlxsw_core;
+
+	event = container_of(work, struct mlxsw_sp_linecard_status_event, work);
+	mlxsw_core = event->mlxsw_core;
+	mlxsw_linecard_status_process(mlxsw_core, event->mddq_pl);
+	kfree(event);
+}
+
+static void
+mlxsw_sp_linecard_status_listener_func(const struct mlxsw_reg_info *reg,
+				       char *mddq_pl, void *priv)
+{
+	struct mlxsw_sp_linecard_status_event *event;
+	struct mlxsw_sp *mlxsw_sp = priv;
+
+	event = kmalloc(sizeof(*event), GFP_ATOMIC);
+	if (!event)
+		return;
+	event->mlxsw_core = mlxsw_sp->core;
+	memcpy(event->mddq_pl, mddq_pl, sizeof(event->mddq_pl));
+	INIT_WORK(&event->work, mlxsw_sp_linecard_status_event_work);
+	mlxsw_core_schedule_work(&event->work);
+}
+
+struct mlxsw_sp_linecard_bct_event {
+	struct mlxsw_core *mlxsw_core;
+	char mbct_pl[MLXSW_REG_MBCT_LEN];
+	struct work_struct work;
+};
+
+static void mlxsw_sp_linecard_bct_event_work(struct work_struct *work)
+{
+	struct mlxsw_sp_linecard_bct_event *event;
+	struct mlxsw_core *mlxsw_core;
+
+	event = container_of(work, struct mlxsw_sp_linecard_bct_event, work);
+	mlxsw_core = event->mlxsw_core;
+	mlxsw_linecard_bct_process(mlxsw_core, event->mbct_pl);
+	kfree(event);
+}
+
+static void
+mlxsw_sp_linecard_bct_listener_func(const struct mlxsw_reg_info *reg,
+				    char *mbct_pl, void *priv)
+{
+	struct mlxsw_sp_linecard_bct_event *event;
+	struct mlxsw_sp *mlxsw_sp = priv;
+
+	event = kmalloc(sizeof(*event), GFP_ATOMIC);
+	if (!event)
+		return;
+	event->mlxsw_core = mlxsw_sp->core;
+	memcpy(event->mbct_pl, mbct_pl, sizeof(event->mbct_pl));
+	INIT_WORK(&event->work, mlxsw_sp_linecard_bct_event_work);
+	mlxsw_core_schedule_work(&event->work);
+}
+
 static void mlxsw_sp1_ptp_fifo_event_func(struct mlxsw_sp *mlxsw_sp,
 					  char *mtpptr_pl, bool ingress)
 {
@@ -2253,6 +2319,8 @@ void mlxsw_sp_ptp_receive(struct mlxsw_sp *mlxsw_sp, struct sk_buff *skb,
 static const struct mlxsw_listener mlxsw_sp_listener[] = {
 	/* Events */
 	MLXSW_SP_EVENTL(mlxsw_sp_pude_event_func, PUDE),
+	MLXSW_SP_EVENTL(mlxsw_sp_linecard_status_listener_func, DSDSC),
+	MLXSW_SP_EVENTL(mlxsw_sp_linecard_bct_listener_func, BCTOE),
 	/* L2 traps */
 	MLXSW_SP_RXL_NO_MARK(FID_MISS, TRAP_TO_CPU, FID_MISS, false),
 	/* L3 traps */
