@@ -578,6 +578,10 @@ enum devlink_attr {
 	DEVLINK_ATTR_LINECARD_TYPE,		/* string */
 	DEVLINK_ATTR_LINECARD_SUPPORTED_TYPES,	/* nested */
 	DEVLINK_ATTR_LINECARD_INFO,		/* nested */
+	DEVLINK_ATTR_LINECARD_DEVICE_LIST,	/* nested */
+	DEVLINK_ATTR_LINECARD_DEVICE,		/* nested */
+	DEVLINK_ATTR_LINECARD_DEVICE_INDEX,	/* u32 */
+	DEVLINK_ATTR_LINECARD_DEVICE_INFO,	/* nested */
 
 	/* add new attributes above here, update the policy in devlink.c */
 
