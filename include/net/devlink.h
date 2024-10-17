@@ -32,6 +32,7 @@ struct devlink_dev_stats {
 struct devlink_ops;
 
 struct devlink {
+	u32 index;
 	struct list_head list;
 	struct list_head port_list;
 	struct list_head rate_list;
@@ -46,6 +47,8 @@ struct devlink {
 	struct list_head trap_list;
 	struct list_head trap_group_list;
 	struct list_head trap_policer_list;
+	struct list_head linecard_list;
+	struct mutex linecards_lock; /* protects linecard_list */
 	const struct devlink_ops *ops;
 	struct xarray snapshot_ids;
 	struct devlink_dev_stats stats;
@@ -57,6 +60,8 @@ struct devlink {
 	u8 reload_failed:1,
 	   reload_enabled:1,
 	   registered:1;
+	refcount_t refcount;
+	struct completion comp;
 	char priv[0] __aligned(NETDEV_ALIGN);
 };
 
@@ -184,6 +189,20 @@ struct devlink_port_new_attrs {
 	u8 port_index_valid:1,
 	   controller_valid:1,
 	   sfnum_valid:1;
+};
+
+struct devlink_linecard {
+	struct list_head list;
+	struct devlink *devlink;
+	unsigned int index;
+	refcount_t refcount;
+};
+
+struct devlink_linecard {
+	struct list_head list;
+	struct devlink *devlink;
+	unsigned int index;
+	refcount_t refcount;
 };
 
 struct devlink_sb_pool_info {
@@ -1570,6 +1589,9 @@ void devlink_port_attrs_pci_sf_set(struct devlink_port *devlink_port,
 int devlink_rate_leaf_create(struct devlink_port *port, void *priv);
 void devlink_rate_leaf_destroy(struct devlink_port *devlink_port);
 void devlink_rate_nodes_destroy(struct devlink *devlink);
+struct devlink_linecard *devlink_linecard_create(struct devlink *devlink,
+						 unsigned int linecard_index);
+void devlink_linecard_destroy(struct devlink_linecard *linecard);
 int devlink_sb_register(struct devlink *devlink, unsigned int sb_index,
 			u32 size, u16 ingress_pools_count,
 			u16 egress_pools_count, u16 ingress_tc_count,
