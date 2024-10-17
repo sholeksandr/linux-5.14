@@ -90,7 +90,6 @@ struct mlxsw_core {
 		struct devlink_health_reporter *fw_fatal;
 	} health;
 	struct mlxsw_env *env;
-	bool is_initialized; /* Denotes if core was already initialized. */
 	unsigned long driver_priv[];
 	/* driver_priv has to be always the last item */
 };
@@ -2013,7 +2012,6 @@ __mlxsw_core_bus_device_register(const struct mlxsw_bus_info *mlxsw_bus_info,
 			goto err_driver_init;
 	}
 
-	mlxsw_core->is_initialized = true;
 	devlink_params_publish(devlink);
 
 	if (!reload)
@@ -2098,7 +2096,6 @@ void mlxsw_core_bus_device_unregister(struct mlxsw_core *mlxsw_core,
 	}
 
 	devlink_params_unpublish(devlink);
-	mlxsw_core->is_initialized = false;
 	if (mlxsw_core->driver->fini)
 		mlxsw_core->driver->fini(mlxsw_core);
 	mlxsw_env_fini(mlxsw_core->env);
@@ -2935,11 +2932,6 @@ EXPORT_SYMBOL(mlxsw_core_port_is_xm);
 struct mlxsw_env *mlxsw_core_env(const struct mlxsw_core *mlxsw_core)
 {
 	return mlxsw_core->env;
-}
-
-bool mlxsw_core_is_initialized(const struct mlxsw_core *mlxsw_core)
-{
-	return mlxsw_core->is_initialized;
 }
 
 int mlxsw_core_module_max_width(struct mlxsw_core *mlxsw_core, u8 module)
