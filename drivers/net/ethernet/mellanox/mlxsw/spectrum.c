@@ -1455,7 +1455,7 @@ static int mlxsw_sp_port_create(struct mlxsw_sp *mlxsw_sp, u8 local_port,
 	int err;
 
 	splittable = lanes > 1 && !split;
-	err = mlxsw_core_port_init(mlxsw_sp->core, local_port,
+	err = mlxsw_core_port_init(mlxsw_sp->core, local_port, 0,
 				   port_mapping->module + 1, split,
 				   port_mapping->lane / lanes,
 				   splittable, lanes,
