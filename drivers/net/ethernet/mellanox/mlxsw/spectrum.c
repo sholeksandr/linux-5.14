@@ -1806,6 +1806,20 @@ static void mlxsw_sp_ports_remove(struct mlxsw_sp *mlxsw_sp)
 	mlxsw_sp->ports = NULL;
 }
 
+static void
+mlxsw_sp_ports_remove_selected(struct mlxsw_core *mlxsw_core,
+			       bool (*selector)(void *priv, u16 local_port),
+			       void *priv)
+{
+	struct mlxsw_sp *mlxsw_sp = mlxsw_core_driver_priv(mlxsw_core);
+	unsigned int max_ports = mlxsw_core_max_ports(mlxsw_core);
+	int i;
+
+	for (i = 1; i < max_ports; i++)
+		if (mlxsw_sp_port_created(mlxsw_sp, i) && selector(priv, i))
+			mlxsw_sp_port_remove(mlxsw_sp, i);
+}
+
 static int mlxsw_sp_ports_create(struct mlxsw_sp *mlxsw_sp)
 {
 	unsigned int max_ports = mlxsw_core_max_ports(mlxsw_sp->core);
@@ -3576,6 +3590,7 @@ static struct mlxsw_driver mlxsw_sp3_driver = {
 	.basic_trap_groups_set		= mlxsw_sp_basic_trap_groups_set,
 	.port_split			= mlxsw_sp_port_split,
 	.port_unsplit			= mlxsw_sp_port_unsplit,
+	.ports_remove_selected		= mlxsw_sp_ports_remove_selected,
 	.sb_pool_get			= mlxsw_sp_sb_pool_get,
 	.sb_pool_set			= mlxsw_sp_sb_pool_set,
 	.sb_port_pool_get		= mlxsw_sp_sb_port_pool_get,
